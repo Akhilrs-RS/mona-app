@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mona_interior/theme/app_colors.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:mona_interior/widgets/forms/bulk_expense_form.dart';
+import 'package:mona_interior/widgets/forms/credit_form.dart';
+import 'package:mona_interior/widgets/forms/expense_form.dart';
 
 class ExpensesScreen extends ConsumerStatefulWidget {
   const ExpensesScreen({super.key});
@@ -69,54 +72,75 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
         ),
         const SizedBox(width: 16),
         // Bulk Entry Button
-        Container(
-          height: 36,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.orange[50],
-            border: Border.all(color: Colors.orange[200]!),
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Row(
-            children: [
-              Icon(LucideIcons.list, size: 14, color: Colors.orange[800]),
-              const SizedBox(width: 8),
-              Text('Bulk Entry', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.orange[800])),
-            ],
+        InkWell(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (ctx) => const BulkExpenseForm(),
+            );
+          },
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            height: 36,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.orange[50],
+              border: Border.all(color: Colors.orange[200]!),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Row(
+              children: [
+                Icon(LucideIcons.list, size: 14, color: Colors.orange[800]),
+                const SizedBox(width: 8),
+                Text('Bulk Entry', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.orange[800])),
+              ],
+            ),
           ),
         ),
         const SizedBox(width: 12),
         // Input Credit Button
-        Container(
-          height: 36,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.green,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: const Row(
-            children: [
-              Icon(LucideIcons.trending_up, size: 14, color: Colors.white),
-              SizedBox(width: 8),
-              Text('Input Credit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-            ],
+        InkWell(
+          onTap: () {
+            showDialog(context: context, builder: (_) => const CreditForm());
+          },
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            height: 36,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Row(
+              children: [
+                Icon(LucideIcons.trending_up, size: 14, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Input Credit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+              ],
+            ),
           ),
         ),
         const SizedBox(width: 12),
         // Log Expense Button
-        Container(
-          height: 36,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: AppColors.primaryGold,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: const Row(
-            children: [
-              Icon(LucideIcons.plus, size: 14, color: Colors.white),
-              SizedBox(width: 8),
-              Text('Log Expense', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-            ],
+        InkWell(
+          onTap: () {
+            showDialog(context: context, builder: (_) => const ExpenseForm());
+          },
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            height: 36,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: AppColors.primaryGold,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Row(
+              children: [
+                Icon(LucideIcons.plus, size: 14, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Log Expense', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+              ],
+            ),
           ),
         ),
         const SizedBox(width: 16),

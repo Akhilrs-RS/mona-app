@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mona_interior/models/crm_models.dart';
 import 'package:mona_interior/providers/crm_provider.dart';
+import 'package:mona_interior/theme/app_colors.dart';
 
 class ClientForm extends ConsumerStatefulWidget {
   final Contact? contact;
@@ -16,11 +17,12 @@ class _ClientFormState extends ConsumerState<ClientForm> {
   final _formKey = GlobalKey<FormState>();
   
   late TextEditingController _nameController;
+  late TextEditingController _orgController;
   late TextEditingController _phoneController;
   late TextEditingController _emailController;
   late TextEditingController _projectController;
+  late TextEditingController _addressController;
   late TextEditingController _sourceController;
-  late TextEditingController _tagsController;
 
   bool _isLoading = false;
 
@@ -28,21 +30,23 @@ class _ClientFormState extends ConsumerState<ClientForm> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.contact?.name ?? '');
+    _orgController = TextEditingController(text: widget.contact?.organizationName ?? '');
     _phoneController = TextEditingController(text: widget.contact?.phone ?? '');
     _emailController = TextEditingController(text: widget.contact?.email ?? '');
     _projectController = TextEditingController(text: widget.contact?.project ?? '');
+    _addressController = TextEditingController(text: widget.contact?.address ?? '');
     _sourceController = TextEditingController(text: widget.contact?.source ?? '');
-    _tagsController = TextEditingController(text: widget.contact?.tags.join(', ') ?? '');
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _orgController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
     _projectController.dispose();
+    _addressController.dispose();
     _sourceController.dispose();
-    _tagsController.dispose();
     super.dispose();
   }
 
@@ -52,16 +56,16 @@ class _ClientFormState extends ConsumerState<ClientForm> {
     setState(() => _isLoading = true);
 
     final updatedContact = Contact(
-      id: widget.contact?.id ?? '', // backend logic handles ID on empty if required
+      id: widget.contact?.id ?? '', 
       name: _nameController.text.trim(),
-      organizationName: widget.contact?.organizationName ?? '',
+      organizationName: _orgController.text.trim(),
       phone: _phoneController.text.trim(),
       email: _emailController.text.trim(),
       project: _projectController.text.trim(),
-      address: widget.contact?.address ?? '',
+      address: _addressController.text.trim(),
       status: widget.contact?.status ?? 'Cold',
       source: _sourceController.text.trim(),
-      tags: _tagsController.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList(),
+      tags: widget.contact?.tags ?? [],
       date: widget.contact?.date ?? DateTime.now().toIso8601String().split('T').first,
     );
 
@@ -83,92 +87,132 @@ class _ClientFormState extends ConsumerState<ClientForm> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(widget.contact == null ? 'Add Client' : 'Edit Client'),
-      content: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.8,
-        height: MediaQuery.of(context).size.height * 0.6,
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        width: 500,
+        padding: const EdgeInsets.all(32),
         child: _isLoading 
-            ? const Center(child: CircularProgressIndicator()) 
+            ? const SizedBox(height: 300, child: Center(child: CircularProgressIndicator()))
             : Form(
                 key: _formKey,
-                child: ListView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(labelText: 'Client Name', prefixIcon: Icon(Icons.person)),
-                      validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+                    // Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Client Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+                            const SizedBox(height: 4),
+                            Text('Comprehensive details for your design client.', style: TextStyle(fontSize: 12, color: Colors.blueGrey)),
+                          ],
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Icon(Icons.close, size: 20, color: Colors.blueGrey[300]),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _phoneController,
-                      decoration: const InputDecoration(labelText: 'Phone', prefixIcon: Icon(Icons.phone)),
-                      keyboardType: TextInputType.phone,
+                    Divider(color: Colors.grey[200]),
+                    const SizedBox(height: 16),
+                    
+                    // Row 1
+                    Row(
+                      children: [
+                        Expanded(child: _buildFormField('FULL NAME', _nameController, required: true)),
+                        const SizedBox(width: 16),
+                        Expanded(child: _buildFormField('ORGANIZATION NAME (OPTIONAL)', _orgController, hintText: 'e.g. Acme Corp')),
+                      ],
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email)),
-                      keyboardType: TextInputType.emailAddress,
+                    // Row 2
+                    Row(
+                      children: [
+                        Expanded(child: _buildFormField('PHONE NUMBER', _phoneController)),
+                        const SizedBox(width: 16),
+                        Expanded(child: _buildFormField('EMAIL ADDRESS', _emailController)),
+                      ],
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _projectController,
-                      decoration: const InputDecoration(labelText: 'Project Focus', prefixIcon: Icon(Icons.home_work)),
-                    ),
+                    // Row 3
+                    _buildFormField('PROJECT FOCUS', _projectController),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _sourceController,
-                      decoration: const InputDecoration(labelText: 'Lead Source', prefixIcon: Icon(Icons.share)),
-                    ),
+                    // Row 4
+                    _buildFormField('PHYSICAL ADDRESS', _addressController),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _tagsController,
-                      decoration: const InputDecoration(labelText: 'Tags (comma separated)', prefixIcon: Icon(Icons.tag)),
-                    ),
+                    // Row 5
+                    _buildFormField('LEAD SOURCE', _sourceController, hintText: 'e.g. Instagram'),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Actions
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text('Cancel', style: TextStyle(color: Colors.blueGrey[400], fontWeight: FontWeight.bold)),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: _saveContact,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryGold,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                          ),
+                          child: const Text('Save Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
       ),
-      actions: [
-        if (widget.contact != null)
-          TextButton(
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text('Delete Client?'),
-                  content: const Text('Are you sure you want to delete this client?'),
-                  actions: [
-                    TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx, true), 
-                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
-                    ),
-                  ],
-                ),
-              );
-              if (confirm == true) {
-                setState(() => _isLoading = true);
-                try {
-                  await ref.read(crmProvider.notifier).deleteContact(widget.contact!.id);
-                  if (mounted) Navigator.of(context).pop();
-                } catch(e) {
-                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-                } finally {
-                  if (mounted) setState(() => _isLoading = false);
-                }
-              }
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+    );
+  }
+
+  Widget _buildFormField(String label, TextEditingController controller, {bool required = false, String? hintText}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: Colors.blueGrey[600]),
         ),
-        FilledButton(
-          onPressed: _saveContact,
-          child: const Text('Save'),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          validator: required ? (val) => val == null || val.isEmpty ? 'Required' : null : null,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(fontSize: 13, color: Colors.blueGrey[300]),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              borderSide: BorderSide(color: AppColors.primaryGold),
+            ),
+            isDense: true,
+          ),
+          style: const TextStyle(fontSize: 13),
         ),
       ],
     );
