@@ -399,7 +399,86 @@ class _CrmScreenState extends ConsumerState<CrmScreen> {
   }
 
   Widget _buildActivitiesContent(List<Activity> activities, List<Contact> contacts) {
-    return const Center(child: Text('Schedule Layout - Work in Progress'));
+    return Padding(
+      padding: const EdgeInsets.all(32.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              _buildScheduleActionCard('Follow-up Call', LucideIcons.phone_call, Colors.blue),
+              const SizedBox(width: 24),
+              _buildScheduleActionCard('Site Visit', LucideIcons.map_pin, const Color(0xFF1F2937)),
+              const SizedBox(width: 24),
+              _buildScheduleActionCard('Send Quotation', LucideIcons.dollar_sign, Colors.green),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: AppColors.borderLight),
+              ),
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(LucideIcons.clock, size: 16, color: Colors.blueGrey[400]),
+                      const SizedBox(width: 8),
+                      Text(
+                        'UPCOMING SCHEDULE',
+                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: Colors.blueGrey[400]),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScheduleActionCard(String title, IconData icon, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.borderLight),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: color.withValues(alpha: 0.2)),
+                  ),
+                  child: Icon(icon, size: 20, color: color),
+                ),
+                const SizedBox(width: 16),
+                Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+              ],
+            ),
+            Icon(LucideIcons.plus, size: 20, color: Colors.blueGrey[300]),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildInsightsContent(List<Deal> deals, List<Activity> activities) {
