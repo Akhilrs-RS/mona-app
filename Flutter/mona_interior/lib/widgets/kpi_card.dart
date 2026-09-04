@@ -6,6 +6,8 @@ class KpiCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final String? sub;
+  final bool showLeftBorder;
+  final Color? valueColor;
 
   const KpiCard({
     super.key,
@@ -14,6 +16,8 @@ class KpiCard extends StatelessWidget {
     required this.icon,
     required this.color,
     this.sub,
+    this.showLeftBorder = true,
+    this.valueColor,
   });
 
   @override
@@ -45,7 +49,7 @@ class KpiCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           decoration: BoxDecoration(
-            border: Border(left: BorderSide(color: color, width: 3)),
+            border: showLeftBorder ? Border(left: BorderSide(color: color, width: 4)) : null,
           ),
           child: Material(
             color: Colors.transparent,
@@ -88,7 +92,7 @@ class KpiCard extends StatelessWidget {
                           fontSize: 24,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -0.5,
-                          color: color,
+                          color: valueColor ?? color,
                         ),
                       ),
                       if (sub != null) ...[

@@ -1,16 +1,528 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mona_interior/theme/app_colors.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:mona_interior/providers/crm_provider.dart';
 
-class BillingScreen extends StatelessWidget {
+class BillingScreen extends ConsumerStatefulWidget {
   const BillingScreen({super.key});
+
+  @override
+  ConsumerState<BillingScreen> createState() => _BillingScreenState();
+}
+
+class _BillingScreenState extends ConsumerState<BillingScreen> {
+  bool _isGst = true;
+  bool _isIgst = false;
+  final List<Map<String, dynamic>> _items = [
+    {
+      'section': 'General',
+      'product': 'Product',
+      'spec': 'Specification',
+      'qty': '0',
+      'unit': 'Sq.Ft',
+      'price': '0.00',
+      'disc': '0.00',
+    }
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Billing'),
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          _buildHeader(),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(24),
+              children: [
+                _buildFormGrid(),
+                const SizedBox(height: 24),
+                _buildLineItemsTable(),
+                const SizedBox(height: 16),
+                _buildTableControls(),
+                const SizedBox(height: 48),
+                _buildCalculationFooter(),
+              ],
+            ),
+          ),
+          _buildBottomActionBar(),
+        ],
       ),
-      body: const Center(
-        child: Text('Billing interface goes here.'),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      height: 48,
+      color: const Color(0xFFF8F9FA),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(color: AppColors.primaryGold, width: 3),
+                right: BorderSide(color: Colors.grey[200]!),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(LucideIcons.file_text, size: 16, color: AppColors.primaryGold),
+                const SizedBox(width: 8),
+                const Text('NEW INVOICE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.blueGrey)),
+                const SizedBox(width: 16),
+                Icon(LucideIcons.x, size: 14, color: Colors.grey[400]),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(LucideIcons.plus, size: 18, color: AppColors.primaryGold),
+            onPressed: () {},
+          ),
+          const Spacer(),
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: const Icon(LucideIcons.bell, size: 16, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormGrid() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Row 1
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(flex: 2, child: _buildTextField('INVOICE NUMBER', 'INV-0926-0001', isYellow: true)),
+            const SizedBox(width: 16),
+            Expanded(flex: 2, child: _buildTextField('DATE', '04/09/2026', isYellow: true, trailingIcon: LucideIcons.calendar)),
+            const SizedBox(width: 16),
+            Expanded(flex: 2, child: _buildBillTypeToggle()),
+            const SizedBox(width: 16),
+            Expanded(flex: 3, child: _buildTextField('CLIENT NAME', 'Enter client name...')),
+            const SizedBox(width: 16),
+            Expanded(flex: 3, child: _buildTextField('EMAIL ID', 'client@example.com')),
+          ],
+        ),
+        const SizedBox(height: 16),
+        // Row 2
+        Row(
+          children: [
+            Expanded(flex: 3, child: _buildTextField('MOBILE NO', '+91..')),
+            const SizedBox(width: 16),
+            Expanded(flex: 3, child: _buildTextField('CUSTOMER GST', 'GSTIN..')),
+            const SizedBox(width: 16),
+            Expanded(flex: 3, child: _buildTextField('DELIVERY TIMELINE', '3 to 4 Weeks')),
+            const SizedBox(width: 16),
+            Expanded(flex: 3, child: _buildTextField('ORGANIZATION NAME (OPTIONAL)', 'e.g. Acme Corporation')),
+          ],
+        ),
+        const SizedBox(height: 16),
+        // Row 3 (Dropdowns)
+        Row(
+          children: [
+            Expanded(flex: 1, child: _buildDropdownField('LINK WORK ORDER (SITE)', '— Select Work Order / Site —')),
+            const SizedBox(width: 16),
+            Expanded(flex: 1, child: _buildDropdownField('LOAD ITEMS FROM QUOTE', '— Select Quotation to Import —')),
+          ],
+        ),
+        const SizedBox(height: 16),
+        // Row 4
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(flex: 4, child: _buildTextField('SITE ADDRESS', 'Work site / project address...')),
+            const SizedBox(width: 16),
+            Expanded(flex: 4, child: _buildTextField('PROJECT TITLE', 'e.g. 3BHK Apartment Interior')),
+            const Spacer(flex: 1),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('SUB TOTAL', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.orange[800])),
+                const Text('₹0', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red)),
+              ],
+            )
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField(String label, String hint, {bool isYellow = false, IconData? trailingIcon}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+        const SizedBox(height: 4),
+        Container(
+          height: 36,
+          decoration: BoxDecoration(
+            color: isYellow ? Colors.yellow[100]?.withValues(alpha: 0.5) : Colors.white,
+            border: Border.all(color: isYellow ? Colors.orange[300]! : Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: hint,
+                    hintStyle: TextStyle(fontSize: 13, color: Colors.grey[400]),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  style: TextStyle(fontSize: 13, fontWeight: isYellow ? FontWeight.bold : FontWeight.normal, color: isYellow ? Colors.brown[800] : Colors.black87),
+                ),
+              ),
+              if (trailingIcon != null)
+                Icon(trailingIcon, size: 16, color: Colors.black87),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdownField(String label, String hint) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+        const SizedBox(height: 4),
+        Container(
+          height: 36,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(hint, style: TextStyle(fontSize: 13, color: Colors.blueGrey[700], fontWeight: FontWeight.bold)),
+              ),
+              Icon(LucideIcons.chevron_down, size: 16, color: Colors.grey[500]),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBillTypeToggle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('BILL TYPE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() => _isGst = true),
+                child: Container(
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: _isGst ? Colors.orange : Colors.white,
+                    border: Border.all(color: _isGst ? Colors.orange : Colors.grey[300]!),
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(4), bottomLeft: Radius.circular(4)),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text('GST', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: _isGst ? Colors.white : Colors.grey[600])),
+                ),
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() => _isGst = false),
+                child: Container(
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: !_isGst ? Colors.orange : Colors.white,
+                    border: Border.all(color: !_isGst ? Colors.orange : Colors.grey[300]!),
+                    borderRadius: const BorderRadius.only(topRight: Radius.circular(4), bottomRight: Radius.circular(4)),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text('NON-GST', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: !_isGst ? Colors.white : Colors.blueGrey)),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        GestureDetector(
+          onTap: () => setState(() => _isIgst = !_isIgst),
+          child: Container(
+            height: 12,
+            decoration: BoxDecoration(
+              color: _isIgst ? Colors.grey[200] : Colors.white,
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(2),
+            ),
+            alignment: Alignment.center,
+            child: Text('IGST INTER-STATE?', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.blueGrey[700])),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLineItemsTable() {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        children: [
+          // Header
+          Container(
+            color: const Color(0xFFF8F9FA),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            child: Row(
+              children: [
+                _buildColHeader('REM', flex: 1),
+                _buildColHeader('S#', flex: 1),
+                _buildColHeader('SECTION', flex: 2),
+                _buildColHeader('PRODUCT', flex: 2),
+                _buildColHeader('SPECIFICATION', flex: 4),
+                _buildColHeader('QTY', flex: 1, alignRight: true),
+                _buildColHeader('UNIT', flex: 1),
+                _buildColHeader('UNIT PRICE', flex: 2, alignRight: true),
+                _buildColHeader('DISC. PRICE', flex: 2, alignRight: true),
+                _buildColHeader('AMOUNT (₹)', flex: 2, alignRight: true),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: Color(0xFFE5E7EB)),
+          // Row
+          ..._items.asMap().entries.map((e) {
+            final idx = e.key;
+            final item = e.value;
+            return Container(
+              color: const Color(0xFFF4F6FB),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
+                children: [
+                  Expanded(flex: 1, child: IconButton(icon: const Icon(LucideIcons.trash_2, size: 16, color: Colors.redAccent), onPressed: () {}, padding: EdgeInsets.zero, constraints: const BoxConstraints())),
+                  Expanded(flex: 1, child: Text('${idx + 1}', style: const TextStyle(fontSize: 12, color: Colors.grey))),
+                  Expanded(flex: 2, child: Text(item['section'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+                  Expanded(flex: 2, child: Text(item['product'], style: const TextStyle(fontSize: 12))),
+                  Expanded(
+                    flex: 4, 
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: item['spec'],
+                          hintStyle: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                          isDense: true,
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ),
+                  Expanded(flex: 1, child: Text(item['qty'], textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, color: Colors.grey))),
+                  Expanded(flex: 1, child: Padding(padding: const EdgeInsets.only(left: 12), child: Text(item['unit'], style: const TextStyle(fontSize: 12, color: Colors.grey)))),
+                  Expanded(flex: 2, child: Text(item['price'], textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, color: Colors.grey))),
+                  Expanded(flex: 2, child: Text(item['disc'], textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, color: Colors.grey))),
+                  Expanded(flex: 2, child: Text(item['price'], textAlign: TextAlign.right, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.brown[800]))),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildColHeader(String text, {required int flex, bool alignRight = false}) {
+    return Expanded(
+      flex: flex,
+      child: Text(
+        text,
+        textAlign: alignRight ? TextAlign.right : TextAlign.left,
+        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+      ),
+    );
+  }
+
+  Widget _buildTableControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          height: 32,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.orange[50],
+            border: Border.all(color: Colors.orange[200]!),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Row(
+            children: [
+              Icon(LucideIcons.plus, size: 14, color: Colors.orange[800]),
+              const SizedBox(width: 8),
+              Text('Add Row', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.orange[800])),
+            ],
+          ),
+        ),
+        const SizedBox(width: 16),
+        Container(
+          height: 32,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Row(
+            children: [
+              const Icon(LucideIcons.settings, size: 14, color: Colors.blueGrey),
+              const SizedBox(width: 8),
+              const Text('Manage Sections', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCalculationFooter() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.yellow[100]?.withValues(alpha: 0.5),
+                border: Border.all(color: Colors.orange[200]!),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Row(
+                children: [
+                  const Text('TOTAL QTY: ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.blueGrey)),
+                  const Text('0', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.black)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 24),
+            _buildSmallInput('INSTAL. MAT. (₹)', '0'),
+            const SizedBox(width: 16),
+            _buildSmallInput('DELIVERY (₹)', '0'),
+            const SizedBox(width: 16),
+            _buildSmallInput('DISCOUNT (₹)', '0'),
+          ],
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text('₹', style: TextStyle(fontSize: 24, color: Colors.orange, fontWeight: FontWeight.w400)),
+            const SizedBox(width: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey[200]!),
+                borderRadius: BorderRadius.circular(4),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2)),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Text('ESTIMATED TOTAL', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+                  const Text('0.00', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.orange, height: 1.1)),
+                  const Text('+ 18% GST APPLICABLE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSmallInput(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+        const SizedBox(height: 4),
+        Container(
+          width: 80,
+          height: 28,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          alignment: Alignment.centerRight,
+          child: Text(value, style: const TextStyle(fontSize: 12)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomActionBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey[200]!)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildActionButton('Clear', LucideIcons.rotate_cw, Colors.orange),
+          const SizedBox(width: 12),
+          _buildActionButton('Invoices', LucideIcons.file_text, Colors.blueGrey[600]!),
+          const SizedBox(width: 12),
+          _buildActionButton('Generate & Print', LucideIcons.printer, Colors.teal),
+          const SizedBox(width: 12),
+          _buildActionButton('Generate', LucideIcons.file_text, Colors.orange),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(String text, IconData icon, Color color) {
+    return Container(
+      height: 36,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: Colors.white),
+          const SizedBox(width: 8),
+          Text(text, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+        ],
       ),
     );
   }
