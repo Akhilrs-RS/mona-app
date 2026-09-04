@@ -111,7 +111,7 @@ class _CrmScreenState extends ConsumerState<CrmScreen> {
               _buildTabBtn('contacts', 'Clients', LucideIcons.user),
               _buildTabBtn('deals', 'Pipeline', LucideIcons.briefcase),
               _buildTabBtn('activities', 'Schedule', LucideIcons.calendar),
-              _buildTabBtn('insights', 'Insights', LucideIcons.bar_chart_2),
+              _buildTabBtn('insights', 'Insights', LucideIcons.chart_bar),
             ],
           ),
         ),

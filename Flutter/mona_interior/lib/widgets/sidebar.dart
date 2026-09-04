@@ -41,7 +41,7 @@ class _SidebarState extends State<Sidebar> {
     {'path': '/employees', 'name': 'Employees', 'icon': LucideIcons.briefcase},
     {'path': '/attendance', 'name': 'Attendance', 'icon': LucideIcons.map_pin},
     {'path': '/salary', 'name': 'Payroll', 'icon': LucideIcons.wallet},
-    {'path': '/reports', 'name': 'Reports', 'icon': LucideIcons.bar_chart_2},
+    {'path': '/reports', 'name': 'Reports', 'icon': LucideIcons.chart_bar},
   ];
 
   @override
@@ -82,7 +82,7 @@ class _SidebarState extends State<Sidebar> {
                   if (widget.isOpen)
                     const Icon(LucideIcons.chevron_left, color: AppColors.primaryGold, size: 22)
                   else
-                    const Icon(LucideIcons.home, color: AppColors.primaryGold, size: 22),
+                    const Icon(LucideIcons.house, color: AppColors.primaryGold, size: 22),
                   if (widget.isOpen) ...[
                     const SizedBox(width: 12),
                     Column(
