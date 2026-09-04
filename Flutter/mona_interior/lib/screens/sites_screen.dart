@@ -204,7 +204,7 @@ class _SitesScreenState extends ConsumerState<SitesScreen> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            const Icon(LucideIcons.mapPin, size: 12, color: AppColors.textMuted),
+                            const Icon(LucideIcons.map_pin, size: 12, color: AppColors.textMuted),
                             const SizedBox(width: 4),
                             Expanded(child: Text(site.address, style: const TextStyle(fontSize: 11, color: AppColors.textMuted, fontWeight: FontWeight.w500))),
                           ],
@@ -313,13 +313,13 @@ class _SitesScreenState extends ConsumerState<SitesScreen> {
                           Text(site.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
                           const SizedBox(width: 16),
                           IconButton(
-                            icon: const Icon(LucideIcons.edit, size: 16, color: AppColors.primaryGold),
+                            icon: const Icon(LucideIcons.pen, size: 16, color: AppColors.primaryGold),
                             onPressed: () {}, // Edit Action
                             style: IconButton.styleFrom(backgroundColor: AppColors.primaryGold.withValues(alpha: 0.1)),
                           ),
                           const SizedBox(width: 8),
                           IconButton(
-                            icon: const Icon(LucideIcons.trash2, size: 16, color: AppColors.danger),
+                            icon: const Icon(LucideIcons.trash_2, size: 16, color: AppColors.danger),
                             onPressed: () {}, // Delete Action
                             style: IconButton.styleFrom(backgroundColor: AppColors.danger.withValues(alpha: 0.1)),
                           ),
@@ -328,7 +328,7 @@ class _SitesScreenState extends ConsumerState<SitesScreen> {
                       const SizedBox(height: 16),
                       Row(
                         children: [
-                          const Icon(LucideIcons.mapPin, size: 14, color: AppColors.info),
+                          const Icon(LucideIcons.map_pin, size: 14, color: AppColors.info),
                           const SizedBox(width: 6),
                           Text(site.address, style: const TextStyle(fontSize: 12, color: AppColors.info, fontWeight: FontWeight.w600)),
                           const SizedBox(width: 16),
@@ -402,9 +402,9 @@ class _SitesScreenState extends ConsumerState<SitesScreen> {
                     indicatorColor: AppColors.primaryGold,
                     tabs: [
                       Tab(icon: Icon(LucideIcons.camera, size: 16), text: 'Gallery'),
-                      Tab(icon: Icon(LucideIcons.history, size: 16), text: 'Timeline'),
+                      Tab(icon: Icon(LucideIcons.clock, size: 16), text: 'Timeline'),
                       Tab(icon: Icon(LucideIcons.wrench, size: 16), text: 'Maintenance'),
-                      Tab(icon: Icon(LucideIcons.indianRupee, size: 16), text: 'Financials'),
+                      Tab(icon: Icon(LucideIcons.indian_rupee, size: 16), text: 'Financials'),
                     ],
                   ),
                   Expanded(

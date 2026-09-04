@@ -111,7 +111,7 @@ class _CrmScreenState extends ConsumerState<CrmScreen> {
               _buildTabBtn('contacts', 'Clients', LucideIcons.user),
               _buildTabBtn('deals', 'Pipeline', LucideIcons.briefcase),
               _buildTabBtn('activities', 'Schedule', LucideIcons.calendar),
-              _buildTabBtn('insights', 'Insights', LucideIcons.barChart2),
+              _buildTabBtn('insights', 'Insights', LucideIcons.bar_chart_2),
             ],
           ),
         ),
@@ -263,7 +263,7 @@ class _CrmScreenState extends ConsumerState<CrmScreen> {
                       flex: 1,
                       child: Row(
                         children: [
-                          const Icon(LucideIcons.filter, size: 12, color: AppColors.textMuted),
+                          const Icon(LucideIcons.list_filter, size: 12, color: AppColors.textMuted),
                           const SizedBox(width: 4),
                           Text(c.source.isEmpty ? 'Unknown' : c.source, style: const TextStyle(fontSize: 12, color: AppColors.textMuted, fontWeight: FontWeight.bold)),
                         ],
@@ -296,8 +296,8 @@ class _CrmScreenState extends ConsumerState<CrmScreen> {
                     // Actions
                     Row(
                       children: [
-                        IconButton(icon: const Icon(LucideIcons.edit3, size: 16, color: AppColors.textMuted), onPressed: () {}),
-                        IconButton(icon: const Icon(LucideIcons.trash2, size: 16, color: AppColors.danger), onPressed: () {}),
+                        IconButton(icon: const Icon(LucideIcons.pen, size: 16, color: AppColors.textMuted), onPressed: () {}),
+                        IconButton(icon: const Icon(LucideIcons.trash_2, size: 16, color: AppColors.danger), onPressed: () {}),
                       ],
                     )
                   ],

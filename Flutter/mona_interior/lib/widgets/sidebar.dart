@@ -23,15 +23,15 @@ class Sidebar extends StatefulWidget {
 
 class _SidebarState extends State<Sidebar> {
   final List<dynamic> menuItems = [
-    {'path': '/', 'name': 'Dashboard', 'icon': LucideIcons.layoutDashboard},
+    {'path': '/', 'name': 'Dashboard', 'icon': LucideIcons.layout_dashboard},
     {'path': '/crm', 'name': 'CRM', 'icon': LucideIcons.users},
-    {'path': '/quotations', 'name': 'Quotations', 'icon': LucideIcons.clipboardList},
+    {'path': '/quotations', 'name': 'Quotations', 'icon': LucideIcons.clipboard_list},
     
     {'type': 'header', 'name': 'PROJECTS'},
-    {'path': '/sites', 'name': 'Work Orders', 'icon': LucideIcons.mapPin},
+    {'path': '/sites', 'name': 'Work Orders', 'icon': LucideIcons.map_pin},
     
     {'type': 'header', 'name': 'FINANCE'},
-    {'path': '/billing', 'name': 'Billing', 'icon': LucideIcons.fileText},
+    {'path': '/billing', 'name': 'Billing', 'icon': LucideIcons.file_text},
     {'path': '/invoices', 'name': 'History', 'icon': LucideIcons.copy}, // using copy for stack
     {'path': '/receipts', 'name': 'Payment Receipts', 'icon': LucideIcons.receipt},
     {'path': '/expenses', 'name': 'Expenses & credits', 'icon': LucideIcons.receipt},
@@ -39,9 +39,9 @@ class _SidebarState extends State<Sidebar> {
     
     {'type': 'header', 'name': 'HUMAN RESOURCES'},
     {'path': '/employees', 'name': 'Employees', 'icon': LucideIcons.briefcase},
-    {'path': '/attendance', 'name': 'Attendance', 'icon': LucideIcons.mapPin},
+    {'path': '/attendance', 'name': 'Attendance', 'icon': LucideIcons.map_pin},
     {'path': '/salary', 'name': 'Payroll', 'icon': LucideIcons.wallet},
-    {'path': '/reports', 'name': 'Reports', 'icon': LucideIcons.barChart2},
+    {'path': '/reports', 'name': 'Reports', 'icon': LucideIcons.bar_chart_2},
   ];
 
   @override
@@ -80,7 +80,7 @@ class _SidebarState extends State<Sidebar> {
                 mainAxisAlignment: widget.isOpen ? MainAxisAlignment.start : MainAxisAlignment.center,
                 children: [
                   if (widget.isOpen)
-                    const Icon(LucideIcons.chevronLeft, color: AppColors.primaryGold, size: 22)
+                    const Icon(LucideIcons.chevron_left, color: AppColors.primaryGold, size: 22)
                   else
                     const Icon(LucideIcons.home, color: AppColors.primaryGold, size: 22),
                   if (widget.isOpen) ...[
