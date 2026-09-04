@@ -32,7 +32,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(LucideIcons.history, color: AppColors.primaryGold, size: 20),
+        Icon(Icons.history, color: AppColors.primaryGold, size: 20),
         const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,7 +238,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(LucideIcons.filter, size: 48, color: Colors.blueGrey[100]),
+                Icon(Icons.filter_alt_outlined, size: 48, color: Colors.blueGrey[100]),
                 const SizedBox(height: 16),
                 Text('NO INVOICES YET. GENERATE FROM THE BILLING PAGE.', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: Colors.blueGrey[300])),
               ],
