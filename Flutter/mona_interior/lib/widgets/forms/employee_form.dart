@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mona_interior/models/hr_models.dart';
 import 'package:mona_interior/providers/hr_provider.dart';
+import 'package:mona_interior/theme/app_colors.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 
 class EmployeeForm extends ConsumerStatefulWidget {
   final Employee? employee;
@@ -14,52 +16,87 @@ class EmployeeForm extends ConsumerStatefulWidget {
 
 class _EmployeeFormState extends ConsumerState<EmployeeForm> {
   final _formKey = GlobalKey<FormState>();
-  late String _name, _role, _department, _phone, _email;
-  late String _salary, _joinDate, _status, _address;
-  late String _advanceBalance, _bankDetails, _govId, _salaryType, _workerId;
+  
+  late TextEditingController _nameController;
+  late TextEditingController _phoneController;
+  late TextEditingController _emailController;
+  late TextEditingController _addressController;
+  late TextEditingController _salaryController;
+  late TextEditingController _govIdController;
+  late TextEditingController _bankDetailsController;
+  
+  String _role = 'Select Job Role';
+  String _status = 'Active';
+  String _salaryType = 'Monthly';
+  
+  final List<String> _roles = ['Select Job Role', 'Interior Designer', 'Project Manager', 'Site Supervisor', 'Carpenter', 'Painter', 'Electrician', 'Plumber', 'Helper'];
+
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _name = widget.employee?.name ?? '';
-    _role = widget.employee?.role ?? '';
-    _department = widget.employee?.department ?? '';
-    _phone = widget.employee?.phone ?? '';
-    _email = widget.employee?.email ?? '';
-    _salary = widget.employee?.salary.toString() ?? '0';
-    _joinDate = widget.employee?.joinDate ?? DateTime.now().toIso8601String().split('T')[0];
-    _status = widget.employee?.status ?? 'Active';
-    _address = widget.employee?.address ?? '';
-    _advanceBalance = widget.employee?.advanceBalance.toString() ?? '0';
-    _bankDetails = widget.employee?.bankDetails ?? '';
-    _govId = widget.employee?.govId ?? '';
-    _salaryType = widget.employee?.salaryType ?? 'Monthly';
-    _workerId = widget.employee?.workerId ?? '';
+    _nameController = TextEditingController(text: widget.employee?.name ?? '');
+    _phoneController = TextEditingController(text: widget.employee?.phone ?? '');
+    _emailController = TextEditingController(text: widget.employee?.email ?? '');
+    _addressController = TextEditingController(text: widget.employee?.address ?? '');
+    _salaryController = TextEditingController(text: widget.employee?.salary.toString() ?? '');
+    _govIdController = TextEditingController(text: widget.employee?.govId ?? '');
+    _bankDetailsController = TextEditingController(text: widget.employee?.bankDetails ?? '');
+    
+    if (widget.employee != null && widget.employee!.role.isNotEmpty) {
+      if (_roles.contains(widget.employee!.role)) {
+        _role = widget.employee!.role;
+      } else {
+        _roles.add(widget.employee!.role);
+        _role = widget.employee!.role;
+      }
+    }
+    
+    if (widget.employee != null) {
+      _status = widget.employee!.status;
+      _salaryType = widget.employee!.salaryType;
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _addressController.dispose();
+    _salaryController.dispose();
+    _govIdController.dispose();
+    _bankDetailsController.dispose();
+    super.dispose();
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    _formKey.currentState!.save();
+    
+    if (_role == 'Select Job Role') {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a valid job role.')));
+      return;
+    }
 
     setState(() => _isLoading = true);
 
     final emp = Employee(
       id: widget.employee?.id ?? 0,
-      name: _name,
+      name: _nameController.text.trim(),
       role: _role,
-      department: _department,
-      phone: _phone,
-      email: _email,
-      salary: double.tryParse(_salary) ?? 0.0,
-      joinDate: _joinDate,
+      department: widget.employee?.department ?? 'General',
+      phone: _phoneController.text.trim(),
+      email: _emailController.text.trim(),
+      salary: double.tryParse(_salaryController.text.trim()) ?? 0.0,
+      joinDate: widget.employee?.joinDate ?? DateTime.now().toIso8601String().split('T')[0],
       status: _status,
-      address: _address,
-      advanceBalance: double.tryParse(_advanceBalance) ?? 0.0,
-      bankDetails: _bankDetails,
-      govId: _govId,
+      address: _addressController.text.trim(),
+      advanceBalance: widget.employee?.advanceBalance ?? 0.0,
+      bankDetails: _bankDetailsController.text.trim(),
+      govId: _govIdController.text.trim(),
       salaryType: _salaryType,
-      workerId: _workerId,
+      workerId: widget.employee?.workerId ?? 'W-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
     );
 
     try {
@@ -70,7 +107,7 @@ class _EmployeeFormState extends ConsumerState<EmployeeForm> {
       }
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Employee saved successfully!')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Employee profile saved successfully!')));
       }
     } catch (e) {
       if (mounted) {
@@ -83,147 +120,183 @@ class _EmployeeFormState extends ConsumerState<EmployeeForm> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(widget.employee == null ? 'New Employee' : 'Edit Employee'),
-      content: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.8,
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                initialValue: _name,
-                decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
-                validator: (val) => val == null || val.isEmpty ? 'Required' : null,
-                onSaved: (val) => _name = val ?? '',
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      initialValue: _workerId,
-                      decoration: const InputDecoration(labelText: 'Worker ID', border: OutlineInputBorder()),
-                      onSaved: (val) => _workerId = val ?? '',
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        width: 760,
+        padding: const EdgeInsets.all(32),
+        child: _isLoading
+            ? const SizedBox(height: 300, child: Center(child: CircularProgressIndicator()))
+            : Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.employee == null ? 'Register New Staff' : 'Edit Staff Profile', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+                        InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(Icons.close, size: 20, color: Colors.blueGrey[400]),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: _status,
-                      decoration: const InputDecoration(labelText: 'Status', border: OutlineInputBorder()),
-                      items: ['Active', 'Inactive', 'On Leave'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-                      onChanged: (val) => setState(() => _status = val ?? 'Active'),
+                    const SizedBox(height: 32),
+                    
+                    // Main Grid
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Left Column: Personal Information
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('PERSONAL INFORMATION', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: Colors.blueGrey[400])),
+                              const SizedBox(height: 16),
+                              _buildTextField(_nameController, 'Full Name', required: true),
+                              const SizedBox(height: 16),
+                              _buildTextField(_phoneController, 'Phone Number', keyboardType: TextInputType.phone, required: true),
+                              const SizedBox(height: 16),
+                              _buildTextField(_emailController, 'Email Address (Optional)', keyboardType: TextInputType.emailAddress),
+                              const SizedBox(height: 16),
+                              _buildTextField(_addressController, 'Home Address'),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 32),
+                        // Right Column: Job & Payroll
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('JOB & PAYROLL', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: Colors.blueGrey[400])),
+                              const SizedBox(height: 16),
+                              DropdownButtonFormField<String>(
+                                value: _role,
+                                items: _roles.map((r) => DropdownMenuItem(value: r, child: Text(r, style: TextStyle(fontSize: 13, fontWeight: r == 'Select Job Role' ? FontWeight.normal : FontWeight.bold, color: const Color(0xFF1F2937))))).toList(),
+                                onChanged: (val) {
+                                  if (val != null) setState(() => _role = val);
+                                },
+                                decoration: _inputDecoration(),
+                                icon: const Icon(LucideIcons.chevron_down, size: 16),
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: DropdownButtonFormField<String>(
+                                      value: _status,
+                                      items: ['Active', 'Inactive', 'On Leave'].map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1F2937))))).toList(),
+                                      onChanged: (val) {
+                                        if (val != null) setState(() => _status = val);
+                                      },
+                                      decoration: _inputDecoration(),
+                                      icon: const Icon(LucideIcons.chevron_down, size: 16),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: DropdownButtonFormField<String>(
+                                      value: _salaryType,
+                                      items: ['Monthly', 'Daily', 'Hourly', 'Weekly'].map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1F2937))))).toList(),
+                                      onChanged: (val) {
+                                        if (val != null) setState(() => _salaryType = val);
+                                      },
+                                      decoration: _inputDecoration(),
+                                      icon: const Icon(LucideIcons.chevron_down, size: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _salaryController,
+                                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                decoration: _inputDecoration(hintText: 'Base Salary Amount', prefixText: '₹ '),
+                                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1F2937)),
+                                validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                initialValue: _role,
-                decoration: const InputDecoration(labelText: 'Role', border: OutlineInputBorder()),
-                onSaved: (val) => _role = val ?? '',
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                initialValue: _department,
-                decoration: const InputDecoration(labelText: 'Department', border: OutlineInputBorder()),
-                onSaved: (val) => _department = val ?? '',
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      initialValue: _phone,
-                      decoration: const InputDecoration(labelText: 'Phone', border: OutlineInputBorder()),
-                      keyboardType: TextInputType.phone,
-                      onSaved: (val) => _phone = val ?? '',
+                    const SizedBox(height: 32),
+                    
+                    // Bottom Section: Verification & Banking
+                    Text('VERIFICATION & BANKING', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: Colors.blueGrey[400])),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTextField(_govIdController, 'Govt ID (e.g. Aadhar / PAN)'),
+                        ),
+                        const SizedBox(width: 32), // Aligning with the center gap of the grid above
+                        Expanded(
+                          child: _buildTextField(_bankDetailsController, 'Bank Details (Bank Name, Acc No, IFSC)'),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextFormField(
-                      initialValue: _email,
-                      decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
-                      keyboardType: TextInputType.emailAddress,
-                      onSaved: (val) => _email = val ?? '',
+                    const SizedBox(height: 32),
+                    
+                    // Submit Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: _save,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryGold,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        child: Text(widget.employee == null ? 'Create Profile' : 'Save Changes', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      initialValue: _salary,
-                      decoration: const InputDecoration(labelText: 'Salary', border: OutlineInputBorder()),
-                      keyboardType: TextInputType.number,
-                      onSaved: (val) => _salary = val ?? '0',
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: _salaryType,
-                      decoration: const InputDecoration(labelText: 'Salary Type', border: OutlineInputBorder()),
-                      items: ['Monthly', 'Daily', 'Hourly', 'Weekly'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-                      onChanged: (val) => setState(() => _salaryType = val ?? 'Monthly'),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                initialValue: _joinDate,
-                decoration: const InputDecoration(labelText: 'Join Date (YYYY-MM-DD)', border: OutlineInputBorder()),
-                onSaved: (val) => _joinDate = val ?? '',
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                initialValue: _address,
-                decoration: const InputDecoration(labelText: 'Address', border: OutlineInputBorder()),
-                maxLines: 2,
-                onSaved: (val) => _address = val ?? '',
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                initialValue: _bankDetails,
-                decoration: const InputDecoration(labelText: 'Bank Details', border: OutlineInputBorder()),
-                maxLines: 2,
-                onSaved: (val) => _bankDetails = val ?? '',
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                initialValue: _govId,
-                decoration: const InputDecoration(labelText: 'Govt ID', border: OutlineInputBorder()),
-                onSaved: (val) => _govId = val ?? '',
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                initialValue: _advanceBalance,
-                decoration: const InputDecoration(labelText: 'Advance Balance', border: OutlineInputBorder()),
-                keyboardType: TextInputType.number,
-                onSaved: (val) => _advanceBalance = val ?? '0',
-              ),
-              const SizedBox(height: 32),
-            ],
-          ),
-        ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        FilledButton.icon(
-          icon: _isLoading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.save),
-          onPressed: _isLoading ? null : _save,
-          label: const Text('Save'),
-        ),
-      ],
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String hint, {bool required = false, TextInputType keyboardType = TextInputType.text}) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      validator: required ? (val) => val == null || val.isEmpty ? 'Required' : null : null,
+      decoration: _inputDecoration(hintText: hint),
+      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1F2937)),
+    );
+  }
+
+  InputDecoration _inputDecoration({String? hintText, String? prefixText}) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: TextStyle(fontSize: 13, color: Colors.blueGrey[400], fontWeight: FontWeight.bold),
+      prefixText: prefixText,
+      prefixStyle: const TextStyle(fontSize: 13, color: Color(0xFF1F2937), fontWeight: FontWeight.bold),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey[300]!),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey[300]!),
+      ),
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(color: AppColors.primaryGold),
+      ),
+      isDense: true,
     );
   }
 }

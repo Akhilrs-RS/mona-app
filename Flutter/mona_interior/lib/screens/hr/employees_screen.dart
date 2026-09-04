@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mona_interior/theme/app_colors.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:mona_interior/widgets/forms/employee_form.dart';
 
 class EmployeesScreen extends ConsumerStatefulWidget {
   const EmployeesScreen({super.key});
@@ -47,19 +48,25 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
         const SizedBox(width: 12),
         _buildHeaderAction(LucideIcons.file_spreadsheet, 'Excel', Colors.green),
         const SizedBox(width: 12),
-        Container(
-          height: 36,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: AppColors.primaryGold,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: const Row(
-            children: [
-              Icon(LucideIcons.plus, size: 14, color: Colors.white),
-              SizedBox(width: 6),
-              Text('Add Staff', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-            ],
+        InkWell(
+          onTap: () {
+            showDialog(context: context, builder: (_) => const EmployeeForm());
+          },
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            height: 36,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: AppColors.primaryGold,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Row(
+              children: [
+                Icon(LucideIcons.plus, size: 14, color: Colors.white),
+                SizedBox(width: 6),
+                Text('Add Staff', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+              ],
+            ),
           ),
         ),
         const SizedBox(width: 16),
