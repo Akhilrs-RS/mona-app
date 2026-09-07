@@ -14,39 +14,41 @@ class EmployeesScreen extends ConsumerStatefulWidget {
 class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!;
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: ListView(
         padding: const EdgeInsets.all(32),
         children: [
-          _buildHeader(),
+          _buildHeader(isDark),
           const SizedBox(height: 24),
-          _buildKPICards(),
+          _buildKPICards(isDark),
           const SizedBox(height: 24),
-          _buildTableContainer(),
+          _buildTableContainer(isDark),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Icon(LucideIcons.users, color: AppColors.primaryGold, size: 20),
         const SizedBox(width: 8),
-        Column(
+        Expanded(child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Staff Directory', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+            Text('Staff Directory', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF111827))),
             const SizedBox(height: 2),
             Text('Manage employee profiles, roles, and payroll setups.', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.blueGrey[400])),
           ],
-        ),
-        const Spacer(),
-        _buildHeaderAction(LucideIcons.file_text, 'PDF', Colors.red),
+        ),),
+        // 
+        _buildHeaderAction(LucideIcons.file_text, 'PDF', Colors.red, isDark),
         const SizedBox(width: 12),
-        _buildHeaderAction(LucideIcons.file_spreadsheet, 'Excel', Colors.green),
+        _buildHeaderAction(LucideIcons.file_spreadsheet, 'Excel', Colors.green, isDark),
         const SizedBox(width: 12),
         InkWell(
           onTap: () {
@@ -73,9 +75,9 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
           ),
           child: const Icon(LucideIcons.bell, size: 18, color: Colors.blueGrey),
         ),
@@ -83,7 +85,7 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
     );
   }
 
-  Widget _buildHeaderAction(IconData icon, String label, Color color) {
+  Widget _buildHeaderAction(IconData icon, String label, Color color, bool isDark) {
     return Container(
       height: 36,
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -101,30 +103,30 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
     );
   }
 
-  Widget _buildKPICards() {
+  Widget _buildKPICards(bool isDark) {
     return Row(
       children: [
-        _buildKPICard('TOTAL STAFF', '0', const Color(0xFF1F2937), LucideIcons.users),
+        _buildKPICard('TOTAL STAFF', '0', isDark ? AppColors.textLight : const Color(0xFF1F2937), LucideIcons.users, isDark),
         const SizedBox(width: 16),
-        _buildKPICard('ACTIVE', '0', Colors.green, null),
+        _buildKPICard('ACTIVE', '0', Colors.green, null, isDark),
         const SizedBox(width: 16),
-        _buildKPICard('INACTIVE', '0', Colors.red, null),
+        _buildKPICard('INACTIVE', '0', Colors.red, null, isDark),
         const SizedBox(width: 16),
-        _buildKPICard('MONTHLY PAYROLL', '₹0', AppColors.primaryGold, LucideIcons.wallet),
+        _buildKPICard('MONTHLY PAYROLL', '₹0', AppColors.primaryGold, LucideIcons.wallet, isDark),
       ],
     );
   }
 
-  Widget _buildKPICard(String title, String value, Color valueColor, IconData? icon) {
+  Widget _buildKPICard(String title, String value, Color valueColor, IconData? icon, bool isDark) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[200]!),
+          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+            if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
           ],
         ),
         child: Row(
@@ -146,14 +148,14 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
     );
   }
 
-  Widget _buildTableContainer() {
+  Widget _buildTableContainer(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 4)),
+          if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -162,15 +164,18 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
           // Filter Area
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 // Search
                 Container(
                   width: 300,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey[300]!),
+                    color: Theme.of(context).cardColor,
+                    border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
                     borderRadius: BorderRadius.circular(18),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -193,13 +198,13 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
                     ],
                   ),
                 ),
-                const Spacer(),
+                
                 // Roles Dropdown
-                _buildDropdown('ALL ROLES'),
-                const SizedBox(width: 12),
+                _buildDropdown('ALL ROLES', isDark),
+
                 // Status Dropdown
-                _buildDropdown('ALL STATUS'),
-                const SizedBox(width: 16),
+                _buildDropdown('ALL STATUS', isDark),
+
                 // View Toggles
                 Icon(LucideIcons.list, size: 18, color: AppColors.primaryGold),
                 const SizedBox(width: 8),
@@ -210,9 +215,12 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
           
           // Table Headers
           Container(
-            color: const Color(0xFFF9FAFB),
+            color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9FAFB),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            child: Row(
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 _buildColHeader('EMPLOYEE', flex: 3),
                 _buildColHeader('CONTACT', flex: 2),
@@ -222,7 +230,7 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
               ],
             ),
           ),
-          const Divider(height: 1, color: Color(0xFFE5E7EB)),
+          Divider(height: 1, color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE5E7EB)),
           
           // Empty State Body
           Container(
@@ -240,13 +248,13 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
     );
   }
 
-  Widget _buildDropdown(String label) {
+  Widget _buildDropdown(String label, bool isDark) {
     return Container(
       height: 32,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey[300]!),
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(

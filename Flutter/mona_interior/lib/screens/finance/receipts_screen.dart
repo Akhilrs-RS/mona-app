@@ -1,3 +1,4 @@
+import 'package:mona_interior/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -12,21 +13,22 @@ class ReceiptsScreen extends ConsumerStatefulWidget {
 class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           children: [
-            _buildHeader(),
+            _buildHeader(isDark),
             const SizedBox(height: 24),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildLeftPanel(),
+                  _buildLeftPanel(isDark),
                   const SizedBox(width: 24),
-                  _buildRightPanel(),
+                  _buildRightPanel(isDark),
                 ],
               ),
             ),
@@ -36,34 +38,34 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: Colors.blue[50],
+            color: isDark ? Colors.blue.withValues(alpha: 0.1) : Colors.blue[50],
             borderRadius: BorderRadius.circular(4),
           ),
           child: Icon(LucideIcons.receipt, color: Colors.blue[700], size: 16),
         ),
         const SizedBox(width: 8),
-        Column(
+        Expanded(child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Payment Receipts', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+            Text('Payment Receipts', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF111827))),
             const SizedBox(height: 2),
             Text('Manage payments per WO.', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.blueGrey[400])),
           ],
-        ),
-        const Spacer(),
+        ),),
+        // const Spacer(),
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
           ),
           child: const Icon(LucideIcons.bell, size: 18, color: Colors.blueGrey),
         ),
@@ -71,14 +73,14 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
     );
   }
 
-  Widget _buildLeftPanel() {
+  Widget _buildLeftPanel(bool isDark) {
     return Expanded(
       flex: 1,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFF9FAFB),
+          color: isDark ? Colors.white.withValues(alpha: 0.02) : const Color(0xFFF9FAFB),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[200]!),
+          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
         ),
         child: Column(
           children: [
@@ -87,8 +89,8 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
               child: Container(
                 height: 36,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey[300]!),
+                  color: Theme.of(context).cardColor,
+                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -117,14 +119,14 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
     );
   }
 
-  Widget _buildRightPanel() {
+  Widget _buildRightPanel(bool isDark) {
     return Expanded(
       flex: 2,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFF3F4F6),
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF3F4F6),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[200]!),
+          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
         ),
         alignment: Alignment.center,
         child: Column(

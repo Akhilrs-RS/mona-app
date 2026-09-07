@@ -28,9 +28,9 @@ class CrmNotifier extends AsyncNotifier<CrmState> {
     final dio = ref.watch(dioProvider);
     try {
       final responses = await Future.wait([
-        dio.get('/crm/contacts'),
-        dio.get('/crm/deals'),
-        dio.get('/crm/activities'),
+        dio.get('/crm'),
+        dio.get('/crm/deals/all'),
+        dio.get('/crm/activities/all'),
         dio.get('/quotations'),
       ]);
 

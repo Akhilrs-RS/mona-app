@@ -13,42 +13,43 @@ class ReportsScreen extends ConsumerStatefulWidget {
 class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: ListView(
         padding: const EdgeInsets.all(32),
         children: [
-          _buildHeader(),
+          _buildHeader(isDark),
           const SizedBox(height: 24),
-          _buildKPICards(),
+          _buildKPICards(isDark),
           const SizedBox(height: 24),
-          _buildMainGrid(),
+          _buildMainGrid(isDark),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Icon(LucideIcons.activity, color: AppColors.primaryGold, size: 20),
         const SizedBox(width: 8),
-        Column(
+        Expanded(child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Reports & Insights', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+            Text('Reports & Insights', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF111827))),
             const SizedBox(height: 2),
             Text('Generate comprehensive reports and monitor real-time business metrics.', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.blueGrey[400])),
           ],
-        ),
-        const Spacer(),
+        ),),
+        // const Spacer(),
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
           ),
           child: const Icon(LucideIcons.bell, size: 18, color: Colors.blueGrey),
         ),
@@ -56,30 +57,30 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     );
   }
 
-  Widget _buildKPICards() {
+  Widget _buildKPICards(bool isDark) {
     return Row(
       children: [
-        _buildKPICard('TOTAL INFLOW', '₹0.00L', Icons.trending_up, Colors.green),
+        _buildKPICard('TOTAL INFLOW', '₹0.00L', Icons.trending_up, Colors.green, isDark),
         const SizedBox(width: 16),
-        _buildKPICard('TOTAL OUTFLOW', '₹0.00L', Icons.trending_down, Colors.red),
+        _buildKPICard('TOTAL OUTFLOW', '₹0.00L', Icons.trending_down, Colors.red, isDark),
         const SizedBox(width: 16),
-        _buildKPICard('CRM LEADS', '0', LucideIcons.users, Colors.blueGrey[400]!),
+        _buildKPICard('CRM LEADS', '0', LucideIcons.users, Colors.blueGrey[400]!, isDark),
         const SizedBox(width: 16),
-        _buildKPICard('ACTIVE PROJECTS', '0', LucideIcons.clipboard, AppColors.primaryGold),
+        _buildKPICard('ACTIVE PROJECTS', '0', LucideIcons.clipboard, AppColors.primaryGold, isDark),
       ],
     );
   }
 
-  Widget _buildKPICard(String title, String value, IconData icon, Color iconColor) {
+  Widget _buildKPICard(String title, String value, IconData icon, Color iconColor, bool isDark) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[200]!),
+          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+            if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
           ],
         ),
         child: Column(
@@ -93,14 +94,14 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF1F2937))),
+            Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF1F2937))),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMainGrid() {
+  Widget _buildMainGrid(bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -113,13 +114,15 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                 title: 'CASHFLOW OVERVIEW (6 MONTHS)',
                 icon: LucideIcons.activity,
                 height: 300,
-                child: _buildMockLineChart(),
+                isDark: isDark,
+                child: _buildMockLineChart(isDark),
               ),
               const SizedBox(height: 16),
               _buildChartCard(
                 title: 'CRM LEAD SOURCES',
                 icon: Icons.pie_chart,
                 height: 250,
+                isDark: isDark,
                 child: const SizedBox(), // empty state for pie chart
               ),
             ],
@@ -129,22 +132,22 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         // Right Column (Generator)
         Expanded(
           flex: 3,
-          child: _buildGeneratorPanel(),
+          child: _buildGeneratorPanel(isDark),
         ),
       ],
     );
   }
 
-  Widget _buildChartCard({required String title, required IconData icon, required double height, required Widget child}) {
+  Widget _buildChartCard({required String title, required IconData icon, required double height, required bool isDark, required Widget child}) {
     return Container(
       height: height,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+          if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -164,7 +167,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     );
   }
 
-  Widget _buildMockLineChart() {
+  Widget _buildMockLineChart(bool isDark) {
     final yLabels = ['₹0.004k', '₹0.003k', '₹0.002k', '₹0.001k', '₹0k'];
     final xLabels = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
 
@@ -188,7 +191,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     // Horizontal lines
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(5, (index) => Container(height: 1, color: Colors.grey[200])),
+                      children: List.generate(5, (index) => Container(height: 1, color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[200])),
                     ),
                   ],
                 ),
@@ -206,14 +209,14 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     );
   }
 
-  Widget _buildGeneratorPanel() {
+  Widget _buildGeneratorPanel(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: const Color(0xFFC9A227), // Gold
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4)),
+          if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(

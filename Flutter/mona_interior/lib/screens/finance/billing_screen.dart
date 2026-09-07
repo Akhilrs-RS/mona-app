@@ -28,44 +28,45 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
-          _buildHeader(),
+          _buildHeader(isDark),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(24),
               children: [
-                _buildFormGrid(),
+                _buildFormGrid(isDark),
                 const SizedBox(height: 24),
-                _buildLineItemsTable(),
+                _buildLineItemsTable(isDark),
                 const SizedBox(height: 16),
-                _buildTableControls(),
+                _buildTableControls(isDark),
                 const SizedBox(height: 48),
-                _buildCalculationFooter(),
+                _buildCalculationFooter(isDark),
               ],
             ),
           ),
-          _buildBottomActionBar(),
+          _buildBottomActionBar(isDark),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDark) {
     return Container(
       height: 48,
-      color: const Color(0xFFF8F9FA),
+      color: isDark ? Theme.of(context).scaffoldBackgroundColor : const Color(0xFFF8F9FA),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               border: Border(
-                top: BorderSide(color: AppColors.primaryGold, width: 3),
-                right: BorderSide(color: Colors.grey[200]!),
+                top: const BorderSide(color: AppColors.primaryGold, width: 3),
+                right: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
               ),
             ),
             child: Row(
@@ -87,8 +88,8 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey[300]!),
+              color: Theme.of(context).cardColor,
+              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
               borderRadius: BorderRadius.circular(4),
             ),
             child: const Icon(LucideIcons.bell, size: 16, color: Colors.grey),
@@ -98,7 +99,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     );
   }
 
-  Widget _buildFormGrid() {
+  Widget _buildFormGrid(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -106,37 +107,37 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(flex: 2, child: _buildTextField('INVOICE NUMBER', 'INV-0926-0001', isYellow: true)),
+            Expanded(flex: 2, child: _buildTextField('INVOICE NUMBER', 'INV-0926-0001', isDark, isYellow: true)),
             const SizedBox(width: 16),
-            Expanded(flex: 2, child: _buildTextField('DATE', '04/09/2026', isYellow: true, trailingIcon: LucideIcons.calendar)),
+            Expanded(flex: 2, child: _buildTextField('DATE', '04/09/2026', isDark, isYellow: true, trailingIcon: LucideIcons.calendar)),
             const SizedBox(width: 16),
-            Expanded(flex: 2, child: _buildBillTypeToggle()),
+            Expanded(flex: 2, child: _buildBillTypeToggle(isDark)),
             const SizedBox(width: 16),
-            Expanded(flex: 3, child: _buildTextField('CLIENT NAME', 'Enter client name...')),
+            Expanded(flex: 3, child: _buildTextField('CLIENT NAME', 'Enter client name...', isDark)),
             const SizedBox(width: 16),
-            Expanded(flex: 3, child: _buildTextField('EMAIL ID', 'client@example.com')),
+            Expanded(flex: 3, child: _buildTextField('EMAIL ID', 'client@example.com', isDark)),
           ],
         ),
         const SizedBox(height: 16),
         // Row 2
         Row(
           children: [
-            Expanded(flex: 3, child: _buildTextField('MOBILE NO', '+91..')),
+            Expanded(flex: 3, child: _buildTextField('MOBILE NO', '+91..', isDark)),
             const SizedBox(width: 16),
-            Expanded(flex: 3, child: _buildTextField('CUSTOMER GST', 'GSTIN..')),
+            Expanded(flex: 3, child: _buildTextField('CUSTOMER GST', 'GSTIN..', isDark)),
             const SizedBox(width: 16),
-            Expanded(flex: 3, child: _buildTextField('DELIVERY TIMELINE', '3 to 4 Weeks')),
+            Expanded(flex: 3, child: _buildTextField('DELIVERY TIMELINE', '3 to 4 Weeks', isDark)),
             const SizedBox(width: 16),
-            Expanded(flex: 3, child: _buildTextField('ORGANIZATION NAME (OPTIONAL)', 'e.g. Acme Corporation')),
+            Expanded(flex: 3, child: _buildTextField('ORGANIZATION NAME (OPTIONAL)', 'e.g. Acme Corporation', isDark)),
           ],
         ),
         const SizedBox(height: 16),
         // Row 3 (Dropdowns)
         Row(
           children: [
-            Expanded(flex: 1, child: _buildDropdownField('LINK WORK ORDER (SITE)', '— Select Work Order / Site —')),
+            Expanded(flex: 1, child: _buildDropdownField('LINK WORK ORDER (SITE)', '— Select Work Order / Site —', isDark)),
             const SizedBox(width: 16),
-            Expanded(flex: 1, child: _buildDropdownField('LOAD ITEMS FROM QUOTE', '— Select Quotation to Import —')),
+            Expanded(flex: 1, child: _buildDropdownField('LOAD ITEMS FROM QUOTE', '— Select Quotation to Import —', isDark)),
           ],
         ),
         const SizedBox(height: 16),
@@ -144,9 +145,9 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Expanded(flex: 4, child: _buildTextField('SITE ADDRESS', 'Work site / project address...')),
+            Expanded(flex: 4, child: _buildTextField('SITE ADDRESS', 'Work site / project address...', isDark)),
             const SizedBox(width: 16),
-            Expanded(flex: 4, child: _buildTextField('PROJECT TITLE', 'e.g. 3BHK Apartment Interior')),
+            Expanded(flex: 4, child: _buildTextField('PROJECT TITLE', 'e.g. 3BHK Apartment Interior', isDark)),
             const Spacer(flex: 1),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -161,7 +162,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     );
   }
 
-  Widget _buildTextField(String label, String hint, {bool isYellow = false, IconData? trailingIcon}) {
+  Widget _buildTextField(String label, String hint, bool isDark, {bool isYellow = false, IconData? trailingIcon}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -170,8 +171,8 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
         Container(
           height: 36,
           decoration: BoxDecoration(
-            color: isYellow ? Colors.yellow[100]?.withValues(alpha: 0.5) : Colors.white,
-            border: Border.all(color: isYellow ? Colors.orange[300]! : Colors.grey[300]!),
+            color: isYellow ? (isDark ? Colors.yellow.withValues(alpha: 0.1) : Colors.yellow[100]?.withValues(alpha: 0.5)) : Theme.of(context).cardColor,
+            border: Border.all(color: isYellow ? (isDark ? Colors.orange.withValues(alpha: 0.2) : Colors.orange[300]!) : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!)),
             borderRadius: BorderRadius.circular(4),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -186,11 +187,11 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
                   ),
-                  style: TextStyle(fontSize: 13, fontWeight: isYellow ? FontWeight.bold : FontWeight.normal, color: isYellow ? Colors.brown[800] : Colors.black87),
+                  style: TextStyle(fontSize: 13, fontWeight: isYellow ? FontWeight.bold : FontWeight.normal, color: isYellow ? Colors.orange[800] : (isDark ? AppColors.textLight : Colors.black87)),
                 ),
               ),
               if (trailingIcon != null)
-                Icon(trailingIcon, size: 16, color: Colors.black87),
+                Icon(trailingIcon, size: 16, color: isDark ? AppColors.textLight : Colors.black87),
             ],
           ),
         ),
@@ -198,7 +199,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     );
   }
 
-  Widget _buildDropdownField(String label, String hint) {
+  Widget _buildDropdownField(String label, String hint, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -207,15 +208,15 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
         Container(
           height: 36,
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey[300]!),
+            color: Theme.of(context).cardColor,
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
             borderRadius: BorderRadius.circular(4),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
               Expanded(
-                child: Text(hint, style: TextStyle(fontSize: 13, color: Colors.blueGrey[700], fontWeight: FontWeight.bold)),
+                child: Text(hint, style: TextStyle(fontSize: 13, color: isDark ? AppColors.textLight : Colors.blueGrey[700], fontWeight: FontWeight.bold)),
               ),
               Icon(LucideIcons.chevron_down, size: 16, color: Colors.grey[500]),
             ],
@@ -225,7 +226,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     );
   }
 
-  Widget _buildBillTypeToggle() {
+  Widget _buildBillTypeToggle(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -239,8 +240,8 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                 child: Container(
                   height: 20,
                   decoration: BoxDecoration(
-                    color: _isGst ? Colors.orange : Colors.white,
-                    border: Border.all(color: _isGst ? Colors.orange : Colors.grey[300]!),
+                    color: _isGst ? Colors.orange : Theme.of(context).cardColor,
+                    border: Border.all(color: _isGst ? Colors.orange : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!)),
                     borderRadius: const BorderRadius.only(topLeft: Radius.circular(4), bottomLeft: Radius.circular(4)),
                   ),
                   alignment: Alignment.center,
@@ -254,8 +255,8 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                 child: Container(
                   height: 20,
                   decoration: BoxDecoration(
-                    color: !_isGst ? Colors.orange : Colors.white,
-                    border: Border.all(color: !_isGst ? Colors.orange : Colors.grey[300]!),
+                    color: !_isGst ? Colors.orange : Theme.of(context).cardColor,
+                    border: Border.all(color: !_isGst ? Colors.orange : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!)),
                     borderRadius: const BorderRadius.only(topRight: Radius.circular(4), bottomRight: Radius.circular(4)),
                   ),
                   alignment: Alignment.center,
@@ -271,8 +272,8 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
           child: Container(
             height: 12,
             decoration: BoxDecoration(
-              color: _isIgst ? Colors.grey[200] : Colors.white,
-              border: Border.all(color: Colors.grey[300]!),
+              color: _isIgst ? (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]) : Theme.of(context).cardColor,
+              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
               borderRadius: BorderRadius.circular(2),
             ),
             alignment: Alignment.center,
@@ -283,17 +284,18 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     );
   }
 
-  Widget _buildLineItemsTable() {
+  Widget _buildLineItemsTable(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
         children: [
           // Header
           Container(
-            color: const Color(0xFFF8F9FA),
+            color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF8F9FA),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             child: Row(
               children: [
@@ -310,13 +312,13 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
               ],
             ),
           ),
-          const Divider(height: 1, color: Color(0xFFE5E7EB)),
+          Divider(height: 1, color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE5E7EB)),
           // Row
           ..._items.asMap().entries.map((e) {
             final idx = e.key;
             final item = e.value;
             return Container(
-              color: const Color(0xFFF4F6FB),
+              color: isDark ? Colors.transparent : const Color(0xFFF4F6FB),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Row(
                 children: [
@@ -344,7 +346,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                   Expanded(flex: 1, child: Padding(padding: const EdgeInsets.only(left: 12), child: Text(item['unit'], style: const TextStyle(fontSize: 12, color: Colors.grey)))),
                   Expanded(flex: 2, child: Text(item['price'], textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, color: Colors.grey))),
                   Expanded(flex: 2, child: Text(item['disc'], textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, color: Colors.grey))),
-                  Expanded(flex: 2, child: Text(item['price'], textAlign: TextAlign.right, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.brown[800]))),
+                  Expanded(flex: 2, child: Text(item['price'], textAlign: TextAlign.right, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: isDark ? AppColors.textLight : Colors.brown[800]))),
                 ],
               ),
             );
@@ -365,7 +367,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     );
   }
 
-  Widget _buildTableControls() {
+  Widget _buildTableControls(bool isDark) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -390,8 +392,8 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
           height: 32,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
-            border: Border.all(color: Colors.grey[300]!),
+            color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[100],
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
@@ -406,7 +408,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     );
   }
 
-  Widget _buildCalculationFooter() {
+  Widget _buildCalculationFooter(bool isDark) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -417,23 +419,23 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.yellow[100]?.withValues(alpha: 0.5),
-                border: Border.all(color: Colors.orange[200]!),
+                color: isDark ? Colors.yellow.withValues(alpha: 0.1) : Colors.yellow[100]?.withValues(alpha: 0.5),
+                border: Border.all(color: isDark ? Colors.orange.withValues(alpha: 0.2) : Colors.orange[200]!),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Row(
                 children: [
                   const Text('TOTAL QTY: ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.blueGrey)),
-                  const Text('0', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.black)),
+                  Text('0', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: isDark ? AppColors.textLight : Colors.black)),
                 ],
               ),
             ),
             const SizedBox(width: 24),
-            _buildSmallInput('INSTAL. MAT. (₹)', '0'),
+            _buildSmallInput('INSTAL. MAT. (₹)', '0', isDark),
             const SizedBox(width: 16),
-            _buildSmallInput('DELIVERY (₹)', '0'),
+            _buildSmallInput('DELIVERY (₹)', '0', isDark),
             const SizedBox(width: 16),
-            _buildSmallInput('DISCOUNT (₹)', '0'),
+            _buildSmallInput('DISCOUNT (₹)', '0', isDark),
           ],
         ),
         Row(
@@ -444,11 +446,11 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey[200]!),
+                color: Theme.of(context).cardColor,
+                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
                 borderRadius: BorderRadius.circular(4),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2)),
+                  if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2)),
                 ],
               ),
               child: Column(
@@ -466,7 +468,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     );
   }
 
-  Widget _buildSmallInput(String label, String value) {
+  Widget _buildSmallInput(String label, String value, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -476,7 +478,8 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
           width: 80,
           height: 28,
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!),
+            color: Theme.of(context).cardColor,
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
             borderRadius: BorderRadius.circular(4),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -487,12 +490,12 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     );
   }
 
-  Widget _buildBottomActionBar() {
+  Widget _buildBottomActionBar(bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[200]!)),
+        color: Theme.of(context).cardColor,
+        border: Border(top: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

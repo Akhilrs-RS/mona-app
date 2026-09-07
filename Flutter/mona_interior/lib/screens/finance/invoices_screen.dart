@@ -15,41 +15,42 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: ListView(
         padding: const EdgeInsets.all(32),
         children: [
-          _buildHeader(),
+          _buildHeader(isDark),
           const SizedBox(height: 24),
-          _isQuotationsView ? _buildQuotationsKPICards() : _buildInvoicesKPICards(),
+          _isQuotationsView ? _buildQuotationsKPICards(isDark) : _buildInvoicesKPICards(isDark),
           const SizedBox(height: 24),
-          _buildTableContainer(),
+          _buildTableContainer(isDark),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Icon(Icons.history, color: AppColors.primaryGold, size: 20),
         const SizedBox(width: 8),
-        Column(
+        Expanded(child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Transaction History', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+            Text('Transaction History', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF111827))),
             const SizedBox(height: 2),
             const Text('All invoices and quotations in one place.', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.blueGrey)),
           ],
-        ),
-        const Spacer(),
+        ),),
+        // const Spacer(),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
           ),
           child: Row(
             children: [
@@ -96,9 +97,9 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
           ),
           child: const Icon(LucideIcons.bell, size: 18, color: Colors.blueGrey),
         ),
@@ -106,18 +107,18 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     );
   }
 
-  Widget _buildInvoicesKPICards() {
+  Widget _buildInvoicesKPICards(bool isDark) {
     return Row(
       children: [
         Expanded(
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
               boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
               ],
             ),
             child: Column(
@@ -131,7 +132,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                const Text('₹0', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Color(0xFF1F2937))),
+                Text('₹0', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF1F2937))),
                 const SizedBox(height: 4),
                 Text('0 invoices total', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.blueGrey[300])),
               ],
@@ -143,11 +144,11 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
               boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
               ],
             ),
             child: Row(
@@ -177,7 +178,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     );
   }
 
-  Widget _buildQuotationsKPICards() {
+  Widget _buildQuotationsKPICards(bool isDark) {
     return Row(
       children: [
         Expanded(
@@ -207,8 +208,8 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
               border: Border.all(color: Colors.grey[200]!),
               boxShadow: [
                 BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
@@ -242,8 +243,8 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
               border: Border.all(color: Colors.grey[200]!),
               boxShadow: [
                 BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
@@ -257,7 +258,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                   children: [
                     Text('PENDING/NEGOTIATING', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: Colors.blueGrey[400])),
                     const SizedBox(height: 12),
-                    const Text('0', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Color(0xFF1F2937))),
+                    Text('0', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: isDark ? AppColors.textLight : const Color(0xFF1F2937))),
                   ],
                 ),
                 Container(
@@ -276,14 +277,14 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     );
   }
 
-  Widget _buildTableContainer() {
+  Widget _buildTableContainer(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 4)),
+          if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -299,8 +300,8 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                   width: 320,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey[300]!),
+                    color: Theme.of(context).cardColor,
+                    border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
                     borderRadius: BorderRadius.circular(18),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -329,7 +330,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
           
           // Table Headers
           Container(
-            color: _isQuotationsView ? Colors.grey[300] : const Color(0xFFF9FAFB),
+            color: _isQuotationsView ? (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]) : (isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9FAFB)),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             child: Row(
               children: _isQuotationsView
@@ -351,7 +352,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                     ],
             ),
           ),
-          const Divider(height: 1, color: Color(0xFFE5E7EB)),
+          Divider(height: 1, color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE5E7EB)),
           
           // Empty State Body
           Container(

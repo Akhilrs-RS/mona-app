@@ -64,7 +64,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final fmt = (num n) => '₹${n.toStringAsFixed(0)}';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: dashboardState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err')),
@@ -133,7 +133,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final headerContent = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Executive Dashboard', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+        Text('Executive Dashboard', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF111827))),
         const SizedBox(height: 4),
         Text('REAL-TIME BUSINESS INTELLIGENCE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.grey[500], letterSpacing: 1.5)),
       ],
@@ -145,8 +145,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+            color: Theme.of(context).cardColor,
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
             borderRadius: BorderRadius.circular(24),
           ),
           child: Row(
@@ -195,12 +195,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         const SizedBox(width: 16),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             shape: BoxShape.circle,
             border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
           ),
           child: IconButton(
-            icon: const Icon(LucideIcons.bell, size: 20, color: Color(0xFF4B5563)),
+            icon: Icon(LucideIcons.bell, size: 20, color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[300] : const Color(0xFF4B5563)),
             onPressed: () {},
           ),
         )
@@ -325,8 +325,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget _buildCardBase({required String title, required String subtitle, required Widget child, Widget? trailing}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
@@ -347,7 +347,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+                  Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF111827))),
                   const SizedBox(height: 4),
                   Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey[500])),
                 ],
@@ -397,7 +397,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+        Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF111827))),
         const SizedBox(height: 12),
         _buildActionTile('New Quotation', 'Create & send', AppColors.primaryGold),
         const SizedBox(height: 8),
@@ -415,8 +415,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget _buildActionTile(String title, String sub, Color borderCol) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
       ),
       child: ClipRRect(
@@ -662,7 +662,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       children: [
         Container(width: 12, height: 4, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2))),
         const SizedBox(width: 8),
-        Text(title, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0)),
+        Text(title, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)),
       ],
     );
   }

@@ -27,51 +27,52 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
-          _buildHeader(),
+          _buildHeader(isDark),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(24),
               children: [
-                _buildFormGrid(),
+                _buildFormGrid(isDark),
                 const SizedBox(height: 24),
-                _buildLineItemsTable(),
+                _buildLineItemsTable(isDark),
                 const SizedBox(height: 16),
-                _buildTableControls(),
+                _buildTableControls(isDark),
                 const SizedBox(height: 48),
-                _buildCalculationFooter(),
+                _buildCalculationFooter(isDark),
               ],
             ),
           ),
-          _buildBottomActionBar(),
+          _buildBottomActionBar(isDark),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(isDark) {
     return Container(
       height: 48,
-      color: const Color(0xFFF8F9FA),
+      color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF8F9FA),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(
+              color: Theme.of(context).cardColor,
+                  border: Border(
                 top: BorderSide(color: AppColors.primaryGold, width: 3),
-                right: BorderSide(color: Colors.grey[200]!),
+                right: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
               ),
             ),
             child: Row(
               children: [
                 const Icon(LucideIcons.file_text, size: 16, color: AppColors.primaryGold),
                 const SizedBox(width: 8),
-                const Text('NEW QUOTE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.blueGrey)),
+                Text('NEW QUOTE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.blueGrey)),
                 const SizedBox(width: 16),
                 Icon(LucideIcons.x, size: 14, color: Colors.grey[400]),
               ],
@@ -86,8 +87,8 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey[300]!),
+              color: Theme.of(context).cardColor,
+                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
               borderRadius: BorderRadius.circular(4),
             ),
             child: const Icon(LucideIcons.bell, size: 16, color: Colors.grey),
@@ -97,35 +98,35 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
     );
   }
 
-  Widget _buildFormGrid() {
+  Widget _buildFormGrid(isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Row 1
         Row(
           children: [
-            Expanded(flex: 2, child: _buildTextField('QUOTATION NUMBER', 'QT-040926-0001', isYellow: true)),
+            Expanded(flex: 2, child: _buildTextField(isDark, 'QUOTATION NUMBER', 'QT-040926-0001', isYellow: true)),
             const SizedBox(width: 16),
-            Expanded(flex: 2, child: _buildTextField('DATE', '04/09/2026', isYellow: true, trailingIcon: LucideIcons.calendar)),
+            Expanded(flex: 2, child: _buildTextField(isDark, 'DATE', '04/09/2026', isYellow: true, trailingIcon: LucideIcons.calendar)),
             const SizedBox(width: 16),
-            Expanded(flex: 2, child: _buildBillTypeToggle()),
+            Expanded(flex: 2, child: _buildBillTypeToggle(isDark)),
             const SizedBox(width: 16),
-            Expanded(flex: 3, child: _buildTextField('CLIENT NAME', 'Enter client name...')),
+            Expanded(flex: 3, child: _buildTextField(isDark, 'CLIENT NAME', 'Enter client name...')),
             const SizedBox(width: 16),
-            Expanded(flex: 3, child: _buildTextField('EMAIL ID', 'client@example.com')),
+            Expanded(flex: 3, child: _buildTextField(isDark, 'EMAIL ID', 'client@example.com')),
           ],
         ),
         const SizedBox(height: 16),
         // Row 2
         Row(
           children: [
-            Expanded(flex: 3, child: _buildTextField('MOBILE NO', '+91..')),
+            Expanded(flex: 3, child: _buildTextField(isDark, 'MOBILE NO', '+91..')),
             const SizedBox(width: 16),
-            Expanded(flex: 3, child: _buildTextField('CUSTOMER GST', 'GSTIN..')),
+            Expanded(flex: 3, child: _buildTextField(isDark, 'CUSTOMER GST', 'GSTIN..')),
             const SizedBox(width: 16),
-            Expanded(flex: 3, child: _buildTextField('DELIVERY TIMELINE', '3 to 4 Weeks')),
+            Expanded(flex: 3, child: _buildTextField(isDark, 'DELIVERY TIMELINE', '3 to 4 Weeks')),
             const SizedBox(width: 16),
-            Expanded(flex: 3, child: _buildTextField('ORGANIZATION NAME (OPTIONAL)', 'e.g. Acme Corporation')),
+            Expanded(flex: 3, child: _buildTextField(isDark, 'ORGANIZATION NAME (OPTIONAL)', 'e.g. Acme Corporation')),
           ],
         ),
         const SizedBox(height: 16),
@@ -133,9 +134,9 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Expanded(flex: 4, child: _buildTextField('SITE ADDRESS', 'Work site / project address...')),
+            Expanded(flex: 4, child: _buildTextField(isDark, 'SITE ADDRESS', 'Work site / project address...')),
             const SizedBox(width: 16),
-            Expanded(flex: 4, child: _buildTextField('PROJECT TITLE', 'e.g. 3BHK Apartment Interior')),
+            Expanded(flex: 4, child: _buildTextField(isDark, 'PROJECT TITLE', 'e.g. 3BHK Apartment Interior')),
             const Spacer(flex: 1),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -150,7 +151,7 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
     );
   }
 
-  Widget _buildTextField(String label, String hint, {bool isYellow = false, IconData? trailingIcon}) {
+  Widget _buildTextField(isDark, String label, String hint, {bool isYellow = false, IconData? trailingIcon}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -159,8 +160,8 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
         Container(
           height: 36,
           decoration: BoxDecoration(
-            color: isYellow ? Colors.yellow[100]?.withValues(alpha: 0.5) : Colors.white,
-            border: Border.all(color: isYellow ? Colors.orange[300]! : Colors.grey[300]!),
+            color: isYellow ? (isDark ? Colors.orange.withValues(alpha: 0.2) : Colors.yellow[100]?.withValues(alpha: 0.5)) : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white),
+            border: Border.all(color: isYellow ? Colors.orange[300]! : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!)),
             borderRadius: BorderRadius.circular(4),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -175,11 +176,11 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
                   ),
-                  style: TextStyle(fontSize: 13, fontWeight: isYellow ? FontWeight.bold : FontWeight.normal, color: isYellow ? Colors.brown[800] : Colors.black87),
+                  style: TextStyle(fontSize: 13, fontWeight: isYellow ? FontWeight.bold : FontWeight.normal, color: isYellow ? (isDark ? Colors.orange[200] : Colors.brown[800]) : (isDark ? Colors.white : Colors.black87)),
                 ),
               ),
               if (trailingIcon != null)
-                Icon(trailingIcon, size: 16, color: Colors.black87),
+                Icon(trailingIcon, size: 16, color: isDark ? Colors.white : Colors.black87),
             ],
           ),
         ),
@@ -187,11 +188,11 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
     );
   }
 
-  Widget _buildBillTypeToggle() {
+  Widget _buildBillTypeToggle(isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('BILL TYPE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+        Text('BILL TYPE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
         const SizedBox(height: 4),
         Row(
           children: [
@@ -231,17 +232,17 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
     );
   }
 
-  Widget _buildLineItemsTable() {
+  Widget _buildLineItemsTable(isDark) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
         children: [
           // Header
           Container(
-            color: const Color(0xFFF8F9FA),
+            color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF8F9FA),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             child: Row(
               children: [
@@ -264,7 +265,7 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
             final idx = e.key;
             final item = e.value;
             return Container(
-              color: const Color(0xFFF4F6FB),
+              color: isDark ? Colors.white.withValues(alpha: 0.02) : const Color(0xFFF4F6FB),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Row(
                 children: [
@@ -284,7 +285,7 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.zero,
                         ),
-                        style: const TextStyle(fontSize: 12),
+                        style: TextStyle(fontSize: 12, color: isDark ? Colors.white : Colors.black87),
                       ),
                     ),
                   ),
@@ -313,7 +314,7 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
     );
   }
 
-  Widget _buildTableControls() {
+  Widget _buildTableControls(isDark) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -339,7 +340,7 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: Colors.grey[100],
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
@@ -354,7 +355,7 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
     );
   }
 
-  Widget _buildCalculationFooter() {
+  Widget _buildCalculationFooter(isDark) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -371,17 +372,17 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
               ),
               child: Row(
                 children: [
-                  const Text('TOTAL QTY: ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.blueGrey)),
-                  const Text('0', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.black)),
+                  Text('TOTAL QTY: ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.blueGrey)),
+                  Text('0', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
                 ],
               ),
             ),
             const SizedBox(width: 24),
-            _buildSmallInput('INSTAL. MAT. (₹)', '0'),
+            _buildSmallInput(isDark, 'INSTAL. MAT. (₹)', '0'),
             const SizedBox(width: 16),
-            _buildSmallInput('DELIVERY (₹)', '0'),
+            _buildSmallInput(isDark, 'DELIVERY (₹)', '0'),
             const SizedBox(width: 16),
-            _buildSmallInput('DISCOUNT (₹)', '0'),
+            _buildSmallInput(isDark, 'DISCOUNT (₹)', '0'),
           ],
         ),
         Row(
@@ -392,11 +393,11 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey[200]!),
+                color: Theme.of(context).cardColor,
+                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
                 borderRadius: BorderRadius.circular(4),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2)),
+                  BoxShadow(color: isDark ? Colors.white : Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2)),
                 ],
               ),
               child: Column(
@@ -414,7 +415,7 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
     );
   }
 
-  Widget _buildSmallInput(String label, String value) {
+  Widget _buildSmallInput(isDark, String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -424,7 +425,7 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
           width: 80,
           height: 28,
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
             borderRadius: BorderRadius.circular(4),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -435,33 +436,33 @@ class _QuotationsScreenState extends ConsumerState<QuotationsScreen> {
     );
   }
 
-  Widget _buildBottomActionBar() {
+  Widget _buildBottomActionBar(isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[200]!)),
+        color: Theme.of(context).cardColor,
+                  border: Border(top: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildActionButton('Clear', LucideIcons.rotate_cw, Colors.orange),
+          _buildActionButton(isDark, 'Clear', LucideIcons.rotate_cw, Colors.orange),
           const SizedBox(width: 12),
-          _buildActionButton('Quotations', LucideIcons.file_text, Colors.blueGrey[600]!),
+          _buildActionButton(isDark, 'Quotations', LucideIcons.file_text, Colors.blueGrey[600]!),
           const SizedBox(width: 12),
-          _buildActionButton('Generate & Print', LucideIcons.printer, Colors.teal),
+          _buildActionButton(isDark, 'Generate & Print', LucideIcons.printer, Colors.teal),
           const SizedBox(width: 12),
-          _buildActionButton('Generate', LucideIcons.file_text, Colors.orange),
+          _buildActionButton(isDark, 'Generate', LucideIcons.file_text, Colors.orange),
           const SizedBox(width: 12),
-          _buildActionButton('Convert to Invoice', LucideIcons.arrow_right, Colors.green),
+          _buildActionButton(isDark, 'Convert to Invoice', LucideIcons.arrow_right, Colors.green),
           const SizedBox(width: 12),
-          _buildActionButton('Convert to Work Order', LucideIcons.arrow_right, Colors.purple),
+          _buildActionButton(isDark, 'Convert to Work Order', LucideIcons.arrow_right, Colors.purple),
         ],
       ),
     );
   }
 
-  Widget _buildActionButton(String text, IconData icon, Color color) {
+  Widget _buildActionButton(isDark, String text, IconData icon, Color color) {
     return Container(
       height: 36,
       padding: const EdgeInsets.symmetric(horizontal: 16),

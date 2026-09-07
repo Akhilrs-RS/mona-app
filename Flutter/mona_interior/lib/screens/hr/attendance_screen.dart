@@ -13,40 +13,41 @@ class AttendanceScreen extends ConsumerStatefulWidget {
 class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: ListView(
         padding: const EdgeInsets.all(32),
         children: [
-          _buildHeader(),
+          _buildHeader(isDark),
           const SizedBox(height: 24),
           _buildTopNav(),
           const SizedBox(height: 24),
-          _buildKPICards(),
+          _buildKPICards(isDark),
           const SizedBox(height: 16),
-          _buildActionBar(),
+          _buildActionBar(isDark),
           const SizedBox(height: 16),
-          _buildTableContainer(),
+          _buildTableContainer(isDark),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Icon(LucideIcons.users, color: AppColors.primaryGold, size: 20),
         const SizedBox(width: 8),
-        Column(
+        Expanded(child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Attendance Management', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF111827))),
+            Text('Attendance Management', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF111827))),
             const SizedBox(height: 2),
             Text('Track daily attendance, overtime, and export reports.', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.blueGrey[400])),
           ],
-        ),
-        const Spacer(),
+        ),),
+        // 
         _buildHeaderAction(LucideIcons.file_text, 'Export PDF', Colors.red),
         const SizedBox(width: 12),
         _buildHeaderAction(LucideIcons.file_spreadsheet, 'Export Excel', Colors.green),
@@ -54,9 +55,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
           ),
           child: const Icon(LucideIcons.bell, size: 18, color: Colors.blueGrey),
         ),
@@ -124,18 +125,18 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     );
   }
 
-  Widget _buildKPICards() {
+  Widget _buildKPICards(bool isDark) {
     return Row(
       children: [
         Expanded(
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
               boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
               ],
             ),
             child: Column(
@@ -147,7 +148,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   children: [
                     const Icon(LucideIcons.calendar, size: 20, color: AppColors.primaryGold),
                     const SizedBox(width: 8),
-                    const Text('04/09/2026', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2937))),
+                    Text('04/09/2026', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? AppColors.textLight : const Color(0xFF1F2937))),
                   ],
                 ),
               ],
@@ -155,25 +156,25 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           ),
         ),
         const SizedBox(width: 16),
-        _buildKPICard('PRESENT', '0', Colors.green),
+        _buildKPICard('PRESENT', '0', Colors.green, isDark),
         const SizedBox(width: 16),
-        _buildKPICard('HALF DAY', '0', Colors.orange),
+        _buildKPICard('HALF DAY', '0', Colors.orange, isDark),
         const SizedBox(width: 16),
-        _buildKPICard('ABSENT', '0', Colors.red),
+        _buildKPICard('ABSENT', '0', Colors.red, isDark),
       ],
     );
   }
 
-  Widget _buildKPICard(String title, String value, Color valueColor) {
+  Widget _buildKPICard(String title, String value, Color valueColor, bool isDark) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[200]!),
+          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+            if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
           ],
         ),
         child: Column(
@@ -188,18 +189,18 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     );
   }
 
-  Widget _buildActionBar() {
+  Widget _buildActionBar(bool isDark) {
     return Row(
       children: [
         const Text('Mark All Present', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primaryGold)),
-        const Spacer(),
+        
         // Save Draft
         Container(
           height: 36,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.orange[50],
-            border: Border.all(color: Colors.orange[200]!),
+            color: isDark ? Colors.orange.withValues(alpha: 0.1) : Colors.orange[50],
+            border: Border.all(color: isDark ? Colors.orange.withValues(alpha: 0.2) : Colors.orange[200]!),
             borderRadius: BorderRadius.circular(18),
           ),
           child: Row(
@@ -231,14 +232,14 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     );
   }
 
-  Widget _buildTableContainer() {
+  Widget _buildTableContainer(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 4)),
+          if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -247,15 +248,18 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           // Filter Area
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 // Search
                 Container(
                   width: 300,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey[300]!),
+                    color: Theme.of(context).cardColor,
+                    border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
                     borderRadius: BorderRadius.circular(18),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -278,21 +282,24 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     ],
                   ),
                 ),
-                const Spacer(),
+                
                 // Roles Dropdown
-                _buildDropdown('ALL ROLES'),
-                const SizedBox(width: 12),
+                _buildDropdown('ALL ROLES', isDark),
+
                 // Status Dropdown
-                _buildDropdown('ALL STATUS'),
+                _buildDropdown('ALL STATUS', isDark),
               ],
             ),
           ),
           
           // Table Headers
           Container(
-            color: const Color(0xFFF9FAFB),
+            color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9FAFB),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            child: Row(
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 _buildColHeader('STAFF DETAILS', flex: 3),
                 _buildColHeader('ROLE', flex: 2),
@@ -301,7 +308,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
               ],
             ),
           ),
-          const Divider(height: 1, color: Color(0xFFE5E7EB)),
+          Divider(height: 1, color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE5E7EB)),
           
           // Empty State Body
           Container(
@@ -319,13 +326,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     );
   }
 
-  Widget _buildDropdown(String label) {
+  Widget _buildDropdown(String label, bool isDark) {
     return Container(
       height: 32,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey[300]!),
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300]!),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
