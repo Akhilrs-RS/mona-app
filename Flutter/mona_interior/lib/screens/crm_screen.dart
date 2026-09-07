@@ -298,8 +298,18 @@ class _CrmScreenState extends ConsumerState<CrmScreen> {
                     // Actions
                     Row(
                       children: [
-                        IconButton(icon: const Icon(LucideIcons.pen, size: 16, color: AppColors.textMuted), onPressed: () {}),
-                        IconButton(icon: const Icon(LucideIcons.trash_2, size: 16, color: AppColors.danger), onPressed: () {}),
+                        IconButton(
+                          icon: const Icon(LucideIcons.pen, size: 16, color: AppColors.textMuted), 
+                          onPressed: () {
+                            showDialog(context: context, builder: (_) => ClientForm(contact: c));
+                          }
+                        ),
+                        IconButton(
+                          icon: const Icon(LucideIcons.trash_2, size: 16, color: AppColors.danger), 
+                          onPressed: () {
+                            ref.read(crmProvider.notifier).deleteContact(c.id);
+                          }
+                        ),
                       ],
                     )
                   ],

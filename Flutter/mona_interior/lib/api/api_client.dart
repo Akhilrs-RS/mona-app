@@ -6,7 +6,7 @@ final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
     // Note: 10.0.2.2 is used to access localhost from an Android emulator.
     // For iOS simulator or real devices, use the specific IP address.
-    baseUrl: kIsWeb ? 'http://localhost:5050/api' : 'http://10.0.2.2:5050/api',
+    baseUrl: kIsWeb ? 'http://localhost:8080/api' : 'http://10.0.2.2:8080/api',
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
     headers: {
